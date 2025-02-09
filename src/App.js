@@ -1,22 +1,25 @@
-
-import './App.css';
-import react,{useState} from 'react';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import Header from './Components/header';
-import Sidebar from './Components/sidebar';
+import React from "react";
+import "./App.css";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Login from "./Pages/Login/login";
+import Dashboard from "./Pages/Dashboard/dashboard";
 
 function App() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const routes = createBrowserRouter([
+    {
+      path: "/",
+      element: <Login />,
+    },
+    {
+      path: "/dashboard",
+      element: <Dashboard/>,
+    }
 
-  // Function to toggle sidebar state
-  const toggleSidebar = () => {
-    setIsSidebarOpen((prevState) => !prevState);
-  };
+  ]);
+
   return (
     <div className="App">
-      {/* <RouterProvider router={routes} /> */}
-      <Header toggleSidebar={toggleSidebar} />
-      <Sidebar isOpen={isSidebarOpen} />
+      <RouterProvider router={routes} />
     </div>
   );
 }

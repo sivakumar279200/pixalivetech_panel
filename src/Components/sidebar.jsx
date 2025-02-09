@@ -1,105 +1,91 @@
 import React from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { FiHome, FiUser, FiSettings, FiPhone, FiBriefcase, FiMonitor, FiUsers, FiTool } from "react-icons/fi";
+import { MdOutlineLogout } from "react-icons/md";
+import { isAuthenticated } from "../Utils/auth";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Sidebar = ({ isOpen }) => {
+  const navigate = useNavigate();
+
+  const logout = () => {
+    try {
+      if (isAuthenticated()) {
+        localStorage.clear();
+        navigate("/");
+        toast.success("Logout Successfully");
+      } else {
+        toast.error("You are not logged in");
+      }
+    } catch (error) {
+      toast.error("Internal Server Error");
+      navigate("/");
+    }
+  };
+
   return (
     <aside
-      className={`fixed top-0 left-0 h-full bg-gray-800 text-white transition-transform ${
-        isOpen ? "w-64" : "w-16"
+      className={`fixed top-0 left-0 h-full bg-[#13266A] text-white transition-transform ${
+        isOpen ? "lg:w-64 w-40" : "w-16"
       } z-40`}
     >
       {/* Logo Section */}
       <div className="p-4 font-bold text-xl border-b border-gray-700">
-        {isOpen ? "Admin Panel" : "C11"}
+        {isOpen ? "Admin Panel" : "Panel"}
       </div>
 
       {/* Navigation Items */}
       <nav className="p-4 space-y-4">
-        {/* Dashboard */}
-        <a
-          href="/dashboard"
-          className="flex items-center gap-3 hover:bg-gray-700 p-2 rounded"
-        >
+        <Link to="/dashboard" className="flex items-center gap-3 hover:bg-gray-700 p-2 rounded">
           <FiHome className="text-lg" />
           {isOpen && <span>Dashboard</span>}
-        </a>
+        </Link>
 
-        {/* Our Clients */}
-        <a
-          href="/ourclients"
-          className="flex items-center gap-3 hover:bg-gray-700 p-2 rounded"
-        >
+        <Link to="/ourclients" className="flex items-center gap-3 hover:bg-gray-700 p-2 rounded">
           <FiUsers className="text-lg" />
           {isOpen && <span>Our Clients</span>}
-        </a>
+        </Link>
 
-        {/* Job Openings */}
-        <a
-          href="/jobopenings"
-          className="flex items-center gap-3 hover:bg-gray-700 p-2 rounded"
-        >
+        <Link to="/jobopenings" className="flex items-center gap-3 hover:bg-gray-700 p-2 rounded">
           <FiBriefcase className="text-lg" />
           {isOpen && <span>Job Openings</span>}
-        </a>
+        </Link>
 
-        {/* Hire Developers */}
-        <a
-          href="/hiredevelopers"
-          className="flex items-center gap-3 hover:bg-gray-700 p-2 rounded"
-        >
+        <Link to="/hiredevelopers" className="flex items-center gap-3 hover:bg-gray-700 p-2 rounded">
           <FiTool className="text-lg" />
           {isOpen && <span>Hire Developers</span>}
-        </a>
+        </Link>
 
-        {/* Laptop Rental */}
-        <a
-          href="/laptoprental"
-          className="flex items-center gap-3 hover:bg-gray-700 p-2 rounded"
-        >
+        <Link to="/laptoprental" className="flex items-center gap-3 hover:bg-gray-700 p-2 rounded">
           <FiMonitor className="text-lg" />
           {isOpen && <span>Laptop Rental</span>}
-        </a>
+        </Link>
 
-        {/* Contact Us */}
-        <a
-          href="/contactus"
-          className="flex items-center gap-3 hover:bg-gray-700 p-2 rounded"
-        >
+        <Link to="/contactus" className="flex items-center gap-3 hover:bg-gray-700 p-2 rounded">
           <FiPhone className="text-lg" />
           {isOpen && <span>Contact Us</span>}
-        </a>
+        </Link>
 
-        {/* Coworking Space */}
-        <a
-          href="/coworkingspace"
-          className="flex items-center gap-3 hover:bg-gray-700 p-2 rounded"
-        >
+        <Link to="/coworkingspace" className="flex items-center gap-3 hover:bg-gray-700 p-2 rounded">
           <FiUsers className="text-lg" />
           {isOpen && <span>Coworking Space</span>}
-        </a>
+        </Link>
 
-        {/* Services */}
-        <a
-          href="/services"
-          className="flex items-center gap-3 hover:bg-gray-700 p-2 rounded"
-        >
+        <Link to="/services" className="flex items-center gap-3 hover:bg-gray-700 p-2 rounded">
           <FiSettings className="text-lg" />
           {isOpen && <span>Services</span>}
-        </a>
-        <a
-          href="/profile"
-          className="flex items-center gap-3 hover:bg-gray-700 p-2 rounded"
-        >
+        </Link>
+
+        <Link to="/profile" className="flex items-center gap-3 hover:bg-gray-700 p-2 rounded">
           <FiUser className="text-lg" />
           {isOpen && <span>Profile</span>}
-        </a>
-        <a
-          href="/settings"
-          className="flex items-center gap-3 hover:bg-gray-700 p-2 rounded"
-        >
-          <FiSettings className="text-lg" />
-          {isOpen && <span>Settings</span>}
-        </a>
+        </Link>
+
+        <button onClick={logout} className="flex items-center gap-3 hover:bg-gray-700 p-2 rounded w-full text-left">
+          <MdOutlineLogout className="text-lg" />
+          {isOpen && <span>Logout</span>}
+        </button>
       </nav>
     </aside>
   );
