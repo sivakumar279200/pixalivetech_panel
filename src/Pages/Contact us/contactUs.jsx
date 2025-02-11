@@ -1,49 +1,44 @@
 import React, { useState, useEffect } from "react";
 import { deleteContactMessage, getContactMessages } from "../../Api/contactUs";
-import { getAdmin, getToken } from "../../Utils/storage";
+import { getToken } from "../../Utils/storage";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 import Header from "../../Components/header";
 import Sidebar from "../../Components/sidebar";
-
+import { Eye, Trash2, MoreVertical } from "lucide-react";
 const ContactList = () => {
   const [contacts, setContacts] = useState([]);
   const [search, setSearch] = useState("");
-  const [selectedContact, setSelectedContact] = useState(null);
-  const [showViewModal, setShowViewModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
-const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [sections, setSections] = useState({
-    hiring: true,
-    clients: true,
-  });
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(null); // Store dropdown open state
 
-  // Function to toggle sidebar state
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const contactsPerPage = 10; 
+
+  // Toggle sidebar
   const toggleSidebar = () => {
     setIsSidebarOpen((prevState) => !prevState);
   };
 
-  // Function to toggle individual sections
-  const toggleSection = (section) => {
-    setSections((prevState) => ({
-      ...prevState,
-      [section]: !prevState[section],
-    }));
-  };
+  // Fetch contacts from API
   useEffect(() => {
     fetchContacts();
   }, []);
 
   const fetchContacts = async () => {
-    const token=getToken();
+    const token = getToken();
     try {
       const res = await getContactMessages(token);
-      setContacts(res?.data?.result|| []);
+      setContacts(res?.data?.result || []);
     } catch (error) {
       toast.error("Error fetching contacts");
     }
   };
 
+  // Delete contact
   const handleDelete = async () => {
     try {
       await deleteContactMessage(deleteId);
@@ -55,15 +50,21 @@ const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     }
   };
 
+  // **Pagination Logic**
+  const filteredContacts = contacts.filter(
+    (c) =>
+      c.name.toLowerCase().includes(search.toLowerCase()) ||
+      c.email.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const indexOfLastContact = currentPage * contactsPerPage;
+  const indexOfFirstContact = indexOfLastContact - contactsPerPage;
+  const currentContacts = filteredContacts.slice(indexOfFirstContact, indexOfLastContact);
+
   return (
     <div className="min-h-screen bg-gray-100 p-6">
-    <Sidebar isOpen={isSidebarOpen} />
-
-    <div
-        className={`flex-1 flex flex-col transition-all duration-300 ${
-          isSidebarOpen ? "lg:ml-64 ml-16" : "ml-16"
-        }`}
-      >
+      <Sidebar isOpen={isSidebarOpen} />
+      <div className={`flex-1 flex flex-col transition-all duration-300 ${isSidebarOpen ? "lg:ml-64 ml-16" : "ml-16"}`}>
         <Header toggleSidebar={toggleSidebar} />
         <h1 className="text-2xl font-semibold text-purple-600 mb-4">Contact List</h1>
 
@@ -79,113 +80,108 @@ const [isSidebarOpen, setIsSidebarOpen] = useState(false);
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white border rounded-lg">
             <thead>
-              <tr className="bg-purple-600 text-white">
+              <tr className="bg-[#13266A] text-white">
                 <th className="p-3 text-left">S.No</th>
                 <th className="p-3 text-left">Name</th>
                 <th className="p-3 text-left">Email</th>
                 <th className="p-3 text-left">Mobile</th>
                 <th className="p-3 text-left">Subject</th>
                 <th className="p-3 text-left">Message</th>
+                <th className="p-3 text-left">Date & Time</th>
                 <th className="p-3 text-center">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {contacts
-                .filter(
-                  (c) =>
-                    c.name.toLowerCase().includes(search.toLowerCase()) ||
-                    c.email.toLowerCase().includes(search.toLowerCase())
-                )
-                .map((contact, index) => (
-                  <tr key={contact._id} className="border-b hover:bg-gray-100">
-                    <td className="p-3">{index + 1}</td>
-                    <td className="p-3">{contact.name}</td>
-                    <td className="p-3">{contact.email}</td>
-                    <td className="p-3">{contact.mobileNumber}</td>
-                    <td className="p-3">{contact.subject}</td>
-                    <td className="p-3">{contact.message}</td>
-                    <td className="p-3 text-center flex justify-center gap-4">
-                      <button
-                        className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
-                        onClick={() => {
-                          setSelectedContact(contact);
-                          setShowViewModal(true);
-                        }}
-                      >
-                        View
-                      </button>
-                      <button
-                        className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
-                        onClick={() => {
-                          setDeleteId(contact._id);
-                          setShowDeleteModal(true);
-                        }}
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+              {currentContacts.map((contact, index) => (
+                <tr key={contact._id} className="border-b hover:bg-gray-100">
+                  <td className="p-3">{indexOfFirstContact + index + 1}</td>
+                  <td className="p-3">{contact.name}</td>
+                  <td className="p-3">{contact.email}</td>
+                  <td className="p-3">{contact.mobileNumber}</td>
+                  <td className="p-3">{contact.subject}</td>
+                  <td className="p-3">{contact.message}</td>
+                  <td className="p-3">{new Date(contact.createdAt).toLocaleString()}</td>
+                  <td className="p-3 text-center ">
+  {/* Three-dot button */}
+  <button
+    className="text-gray-600 hover:text-gray-900 focus:outline-none text-2xl"
+    onClick={() => setDropdownOpen(dropdownOpen === contact._id ? null : contact._id)}
+  >
+    <MoreVertical size={24} />
+  </button>
+
+  {/* Dropdown menu */}
+  {dropdownOpen === contact._id && (
+    <div className="absolute right-0 mt-2 w-32 bg-white border rounded-lg shadow-lg z-10 overflow-auto max-h-48">
+      {/* View Button */}
+      <Link  to={{
+                                      pathname: "/contactus/viewcontact",
+                                      search: `?id=${contact?._id}`,
+                                    }}>
+        <button className="flex items-center gap-2 w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+          <Eye size={16} /> View
+        </button>
+      </Link>
+
+      {/* Delete Button */}
+      <button
+        className="flex items-center gap-2 w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+        onClick={() => {
+          setDeleteId(contact._id);
+          setShowDeleteModal(true);
+          setDropdownOpen(null);
+        }}
+      >
+        <Trash2 size={16} /> Delete
+      </button>
+    </div>
+  )}
+</td>
+
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
 
-        {/* View Contact Modal */}
-        {showViewModal && selectedContact && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white p-6 rounded-lg shadow-md w-96">
-              <h2 className="text-lg font-semibold text-purple-600 mb-4">Contact Details</h2>
-              <p>
-                <strong>Name:</strong> {selectedContact.name}
-              </p>
-              <p>
-                <strong>Email:</strong> {selectedContact.email}
-              </p>
-              <p>
-                <strong>Mobile:</strong> {selectedContact.mobileNumber}
-              </p>
-              <p>
-                <strong>Subject:</strong> {selectedContact.subject}
-              </p>
-              <p>
-                <strong>Message:</strong> {selectedContact.messages}
-              </p>
-              <div className="mt-4 flex justify-end">
-                <button
-                  className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
-                  onClick={() => setShowViewModal(false)}
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Pagination Controls */}
+        <div className="flex justify-end items-center mt-4">
+          <button
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage(currentPage - 1)}
+            className={`px-4 py-2 rounded ${currentPage === 1 ? "bg-[#13266A] text-white cursor-not-allowed  hover:bg-yellow-950 " : "bg-[#13266A] text-white hover:bg-yellow-950"}`}
+          >
+            Prev
+          </button>
+
+          <span className="text-gray-700 p-5">Page {currentPage} of {Math.ceil(filteredContacts.length / contactsPerPage)}</span>
+
+          <button
+            disabled={indexOfLastContact >= filteredContacts.length}
+            onClick={() => setCurrentPage(currentPage + 1)}
+            className={`px-4 py-2 rounded ${indexOfLastContact >= filteredContacts.length ? "bg-[#13266A] text-white cursor-not-allowed  hover:bg-yellow-950" : "bg-[#13266A] text-white hover:bg-yellow-950"}`}
+          >
+            Next
+          </button>
+        </div>
 
         {/* Delete Confirmation Modal */}
         {showDeleteModal && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-white p-6 rounded-lg shadow-md text-center">
-              <h2 className="text-lg font-semibold text-purple-600 mb-4">
-                Are you sure you want to delete this contact?
-              </h2>
-              <div className="flex justify-center space-x-4">
-                <button
-                  className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-                  onClick={handleDelete}
-                >
+              <h2 className="text-lg font-semibold text-purple-600 mb-4">Are you sure you want to delete this contact?</h2>
+              <div className="flex justify-center gap-4">
+                <button className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600" onClick={handleDelete}>
                   Yes, Delete
                 </button>
-                <button
-                  className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
-                  onClick={() => setShowDeleteModal(false)}
-                >
+                <button className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500" onClick={() => setShowDeleteModal(false)}>
                   Cancel
                 </button>
               </div>
             </div>
           </div>
         )}
+
       </div>
     </div>
   );
