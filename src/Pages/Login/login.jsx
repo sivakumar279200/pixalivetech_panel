@@ -47,13 +47,23 @@ const Login = () => {
       setErrors(newError);
     }
   };
-
+  const handleErrors = (obj) => {
+    for (const key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        const prop = obj[key];
+        if (prop.required === true || prop.valid === true) {
+          return false;
+        }
+      }
+    }
+    return true;
+  };
   const handleSubmit = (event) => {
     event.preventDefault();
     const newError = handleValidation(inputs);
     setErrors(newError);
     SetSubmitted(true);
-    if (!newError.email.required && !newError.password.required) {
+    if (handleErrors(newError)) {
       const data = {
         email: inputs.email,
         password: inputs.password,
