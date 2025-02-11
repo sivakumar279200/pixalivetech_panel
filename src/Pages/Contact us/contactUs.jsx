@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { deleteContactMessage, getContactMessages } from "../../Api/contactUs";
-import { getAdmin } from "../../Utils/storage";
+import { getAdmin, getToken } from "../../Utils/storage";
 import { toast } from "react-toastify";
+import Header from "../../Components/header";
+import Sidebar from "../../Components/sidebar";
 
 const ContactList = () => {
   const [contacts, setContacts] = useState([]);
@@ -10,15 +12,33 @@ const ContactList = () => {
   const [showViewModal, setShowViewModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
+const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [sections, setSections] = useState({
+    hiring: true,
+    clients: true,
+  });
 
+  // Function to toggle sidebar state
+  const toggleSidebar = () => {
+    setIsSidebarOpen((prevState) => !prevState);
+  };
+
+  // Function to toggle individual sections
+  const toggleSection = (section) => {
+    setSections((prevState) => ({
+      ...prevState,
+      [section]: !prevState[section],
+    }));
+  };
   useEffect(() => {
     fetchContacts();
   }, []);
 
   const fetchContacts = async () => {
+    const token=getToken();
     try {
-      const res = await getContactMessages({ userId: getAdmin() });
-      setContacts(res?.data?.result?.userList || []);
+      const res = await getContactMessages(token);
+      setContacts(res?.data?.result|| []);
     } catch (error) {
       toast.error("Error fetching contacts");
     }
@@ -37,7 +57,14 @@ const ContactList = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
-      <div className="max-w-5xl mx-auto bg-white shadow-md rounded-lg p-6">
+    <Sidebar isOpen={isSidebarOpen} />
+
+    <div
+        className={`flex-1 flex flex-col transition-all duration-300 ${
+          isSidebarOpen ? "lg:ml-64 ml-16" : "ml-16"
+        }`}
+      >
+        <Header toggleSidebar={toggleSidebar} />
         <h1 className="text-2xl font-semibold text-purple-600 mb-4">Contact List</h1>
 
         {/* Search Bar */}
@@ -76,7 +103,7 @@ const ContactList = () => {
                     <td className="p-3">{contact.email}</td>
                     <td className="p-3">{contact.mobileNumber}</td>
                     <td className="p-3">{contact.subject}</td>
-                    <td className="p-3">{contact.messages}</td>
+                    <td className="p-3">{contact.message}</td>
                     <td className="p-3 text-center flex justify-center gap-4">
                       <button
                         className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
