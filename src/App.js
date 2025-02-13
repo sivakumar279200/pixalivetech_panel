@@ -2,12 +2,14 @@ import { createBrowserRouter, RouterProvider, Navigate, Outlet } from "react-rou
 import Login from "./Pages/Login/login";
 import Dashboard from "./Pages/Dashboard/dashboard";
 import ContactUs from "./Pages/Contact us/contactUs.jsx";
-
+import Ourclients from "./Pages/Our clients/ourclients.jsx";
 import { isAuthenticated } from "./Utils/auth";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useEffect } from "react";
 import ViewContact from "./Pages/Contact us/viewcontact.jsx";
+import ViewClient from "./Pages/Our clients/viewclients.jsx";
+import EditClient from "./Pages/Our clients/editclients.jsx";
 
 // Protected Route Component
 const ProtectedRoute = ({ element }) => {
@@ -20,14 +22,19 @@ const ProtectedRoute = ({ element }) => {
   return isAuthenticated() ? element : <Navigate to="/" replace />;
 };
 
-// Contact Us Layout (for nested routing)
-const ContactUsLayout = () => {
-  return (
-    <>
-      <Outlet /> {/* Renders child routes */}
-    </>
-  );
-};
+// Contact Us Layout
+const ContactUsLayout = () => (
+  <>
+    <Outlet />
+  </>
+);
+
+// Our Clients Layout (Fixing nested routing)
+const OurClientsLayout = () => (
+  <>
+    <Outlet />
+  </>
+);
 
 // Define routes
 const routes = createBrowserRouter([
@@ -48,9 +55,27 @@ const routes = createBrowserRouter([
         element: <ContactUs />,
       },
       {
-        path: "viewcontact", // No leading slash
+        path: "viewcontact", // No leading slash needed
         element: <ProtectedRoute element={<ViewContact />} />,
       },
+    ],
+  },
+  {
+    path: "/ourclients",
+    element: <ProtectedRoute element={<OurClientsLayout />} />,
+    children: [
+      {
+        index: true, // Default child route for "/ourclients"
+        element: <Ourclients />,
+      },
+      {
+        path: "viewclient", // No leading slash needed
+        element: <ProtectedRoute element={<ViewClient />} />,
+      },
+      {
+        path: "editclient", // No leading slash needed
+        element: <ProtectedRoute element={<EditClient />} />,
+      }
     ],
   },
 ]);
