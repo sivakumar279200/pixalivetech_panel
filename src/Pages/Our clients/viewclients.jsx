@@ -32,7 +32,7 @@ const ViewClient = () => {
   return (
     <div className="flex">
       <Sidebar isOpen={isSidebarOpen} />
-      <div className="flex-1">
+      <div className={`flex-1 flex flex-col transition-all duration-300 ${isSidebarOpen ? "lg:ml-64 ml-16" : "ml-16"}`}>
         <Header toggleSidebar={toggleSidebar} />
         <div className="p-6 mt-16">
           <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-6">

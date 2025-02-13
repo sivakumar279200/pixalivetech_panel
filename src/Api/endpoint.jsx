@@ -1,4 +1,5 @@
 export const Login = "login";
 export const Admin = "admin";
 export const contactUs="contactUs";
-export const Ourclients="ourclients";
+export const Ourclients="ourClients";
+export const Laptoprental="laptopRental";

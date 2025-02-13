@@ -141,70 +141,66 @@ const handleValidation = (data) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <Sidebar isOpen={isSidebarOpen} />
-      <div className={`flex-1 flex flex-col transition-all duration-300 mb-5 ${isSidebarOpen ? "lg:ml-64 ml-16" : "ml-16"}`}>
-        <Header toggleSidebar={toggleSidebar} />
-        
+    <div className="min-h-screen bg-gray-100 p-4 md:p-6">
+    <Sidebar isOpen={isSidebarOpen} />
+    <div className={`flex-1 flex flex-col transition-all duration-300 ${isSidebarOpen ? "lg:ml-64 ml-16" : "ml-16"}`}>
+      <Header toggleSidebar={toggleSidebar} />
 
-        <div className="max-w-lg mx-auto  px-6 w-[30%] mb-4 mt-16">
-        <div className="flex justify-between items-center mb-4">
-                      <h2 className="text-xl font-semibold text-[#13266A]">
-                        Edit Client 
-                      </h2>
-                      <Link to="/ourclients">
-                        <button className="bg-[#13266A] text-white px-4 py-2 rounded-md hover:bg-yellow-950 transition flex  justify-center items-center gap-2">
-                          <FiArrowLeft className="text-xl" /> Clients List 
-                        </button>
-                      </Link>
-                    </div>
-                    </div>
-        <div className="max-w-lg mx-auto bg-white shadow-lg rounded-lg p-6 w-96 mb-4">
-          <form onSubmit={handleEditClient}>
-            <label className="block text-md font-medium mb-2 text-start">Name:</label>
-            <input
-              type="text"
-              name="name"
-              placeholder="Client Name"
-              className="w-full p-2 border rounded-lg mb-4"
-              value={inputs.name}
-              onChange={handleInputs}
-            />
-            {errors.name.required && <span className="text-red-500 text-sm">Name is required</span>}
-
-            <label className="block text-md font-medium mb-2 text-start">Logo:</label>
-            <div className="form-group flex justify-start">
-              <label htmlFor="fileInputImage" className="file-upload btn rounded-full cursor-pointer">
-                {inputs.logo ? (
-                  <img src={inputs.logo} width="100" height="100" alt="Preview" className="rounded-full border shadow-md" />
-                ) : (
-                  <FiCamera size={60} />
-                )}
-                {inputs.logo && (
-    <p className="text-sm text-start text-gray-700 mt-2">Uploaded: {inputs?.fileName || "Please Select an Image"}</p>
-  )}
-              </label>
-              <input
-                ref={profileRef}
-                className="hidden"
-                onChange={handleFileInputs}
-                name="logo"
-                id="fileInputImage"
-                type="file"
-                accept="image/*"
-              />
-            </div>
-            {errors.logo.required && <span className="text-red-500 text-sm">Logo is required</span>}
-
-            <div className="flex justify-end mt-4">
-              <button type="submit" className="bg-[#13266A] text-white px-4 py-2 rounded-lg hover:bg-yellow-950">
-                Save Changes
-              </button>
-            </div>
-          </form>
+      {/* Edit Client Section */}
+      <div className="max-w-md md:max-w-lg mx-auto px-4 w-full mt-16">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-semibold text-[#13266A]">Edit Client</h2>
+          <Link to="/ourclients">
+            <button className="bg-[#13266A] text-white px-4 py-2 rounded-md hover:bg-yellow-950 transition flex items-center gap-2">
+              <FiArrowLeft className="text-xl" /> Clients List
+            </button>
+          </Link>
         </div>
-        <div className="overflow-x-auto px-24 ">
-          <table className="min-w-full bg-white border rounded-lg">
+      </div>
+
+      {/* Form Section */}
+      <div className="max-w-md md:max-w-lg mx-auto bg-white shadow-lg rounded-lg p-6 w-full">
+        <form onSubmit={handleEditClient}>
+          <label className="block text-md font-medium mb-2">Name:</label>
+          <input
+            type="text"
+            name="name"
+            placeholder="Client Name"
+            className="w-full p-2 border rounded-lg mb-4"
+            value={inputs.name}
+            onChange={handleInputs}
+          />
+          {errors.name.required && <span className="text-red-500 text-sm">Name is required</span>}
+
+          <label className="block text-md font-medium mb-2">Logo:</label>
+          <div className="flex items-center">
+            <label htmlFor="fileInputImage" className="cursor-pointer">
+              {inputs.logo ? (
+                <img src={inputs.logo} width="100" height="100" alt="Preview" className="rounded-full border shadow-md" />
+              ) : (
+                <FiCamera size={60} className="text-gray-600" />
+              )}
+            </label>
+            <input ref={profileRef} className="hidden" id="fileInputImage" type="file" accept="image/*" onChange={handleFileInputs} />
+         
+          </div>
+          {inputs.logo && (
+    <p className="text-sm text-start text-gray-700 mt-2">Uploaded: {inputs.fileName}</p>
+  )}
+          {errors.logo.required && <span className="text-red-500 text-sm">Logo is required</span>}
+
+          <div className="flex justify-end mt-6">
+            <button type="submit" className="bg-[#13266A] text-white px-6 py-2 rounded-lg hover:bg-yellow-950">
+              Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+
+      {/* Table Section */}
+      <div className="overflow-x-auto px-4 md:px-24 mt-6">
+        <div className="overflow-auto rounded-lg shadow-lg">
+          <table className="w-full bg-white border rounded-lg min-w-[600px]">
             <thead>
               <tr className="bg-[#13266A] text-white">
                 <th className="p-3 text-left">S.No</th>
@@ -215,30 +211,25 @@ const handleValidation = (data) => {
               </tr>
             </thead>
             <tbody>
-            
-            <tr className="border-b hover:bg-gray-100">
-  <td className="p-3">1</td>
-  <td className="p-3">{inputs.name}</td>
-  <td className="p-3">
-    {inputs.logo ? (
-      <img src={inputs.logo} alt={inputs.name} className="h-10 w-10 rounded-full" />
-    ) : (
-      "No Image"
-    )}
-  </td>
-  <td className="p-3">{inputs.status === 1 ? "Active" : "Inactive"}</td>
-  <td className="p-3">
-    {new Date(inputs?.createdAt || Date.now()).toLocaleDateString()}
-  </td>
-</tr>
-
-           
+              <tr className="border-b hover:bg-gray-100">
+                <td className="p-3">1</td>
+                <td className="p-3">{inputs.name}</td>
+                <td className="p-3">
+                  {inputs.logo ? (
+                    <img src={inputs.logo} alt={inputs.name} className="h-10 w-10 rounded-full" />
+                  ) : (
+                    "No Image"
+                  )}
+                </td>
+                <td className="p-3">{inputs.status === 1 ? "Active" : "Inactive"}</td>
+                <td className="p-3">{new Date(inputs?.createdAt || Date.now()).toLocaleDateString()}</td>
+              </tr>
             </tbody>
           </table>
         </div>
       </div>
-     
     </div>
+  </div>
   );
 };
 
