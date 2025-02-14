@@ -40,7 +40,7 @@ const ViewLaptop = () => {
             {/* Header Section */}
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold text-[#13266A]">View Laptop</h2>
-              <Link to="/laptops">
+              <Link to="/laptoprental">
                 <button className="bg-[#13266A] text-white px-4 py-2 rounded-md hover:bg-yellow-950 transition flex items-center gap-2">
                   <FiArrowLeft className="text-xl" /> Laptops List
                 </button>

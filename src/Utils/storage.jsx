@@ -4,14 +4,14 @@ export const saveToken = (data) => {
     localStorage.setItem("loginType", data?.loginType);
     if (data?.Admin) {
       localStorage.setItem(
-        "Admin",
+        "AdminId",
         data?.Admin
       );
     }
   };
   
-  export const getAdmin = () => {
-    return localStorage.getItem("Admin");
+  export const getAdminId = () => {
+    return localStorage.getItem("AdminId");
   }
   
   export const getToken = () => {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect ,useRef} from "react";
 import { getClients, deleteClient, addClient } from "../../Api/ourClient"; 
-import { getToken } from "../../Utils/storage";
+import { getAdminId, getToken } from "../../Utils/storage";
 import { uploadFile } from "../../Utils/fileUpload"; 
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
@@ -19,6 +19,7 @@ const OurClient = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const profileRef = useRef(null);
   const initialStateInputs = {
+    adminId: getAdminId(),
     name: "",
     logo: "", 
 

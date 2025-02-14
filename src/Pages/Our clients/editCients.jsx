@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { getSingleClient, updateClient } from "../../Api/ourClient"; 
-import { getToken } from "../../Utils/storage";
+import { getAdminId, getToken } from "../../Utils/storage";
 import { uploadFile } from "../../Utils/fileUpload"; 
 import { toast } from "react-toastify";
 import Header from "../../Components/header";
@@ -15,6 +15,7 @@ const EditClient = () => {
   const profileRef = useRef(null);
 
 const initialStateInputs = {
+    adminId:getAdminId(),
     _id:id || "",
     name: "",
     logo: "",

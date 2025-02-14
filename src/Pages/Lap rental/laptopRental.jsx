@@ -1,6 +1,6 @@
 import React, { useState, useEffect ,useRef} from "react";
 import { getLaptops, deleteLaptop, addLaptop, updateLaptop } from "../../Api/laptopRental"; 
-import { getToken } from "../../Utils/storage";
+import { getAdminId, getToken } from "../../Utils/storage";
 import { uploadFile } from "../../Utils/fileUpload"; 
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
@@ -19,6 +19,7 @@ const Laptoprental = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const profileRef = useRef(null);
   const initialStateInputs = {
+    adminId: getAdminId(),
     title: "",
     desc: "", 
     price: "",
@@ -117,6 +118,7 @@ console.log("inputs",inputs);
   // Fetch clients
   useEffect(() => {
     fetchLaptops();
+    console.log("adminId",getAdminId())
   }, []);
 
   const fetchLaptops = async () => {
@@ -168,7 +170,7 @@ console.log("inputs",inputs);
     setShowAddModal(false); 
 };
 const filteredLaptops = laptops.filter((c) =>
-    c?.name?.toLowerCase().includes(search.toLowerCase())
+    c?.title?.toLowerCase().includes(search.toLowerCase())
   );
 console.log("filteredLaptops",filteredLaptops);  
 
@@ -227,7 +229,7 @@ console.log("filteredLaptops",filteredLaptops);
                   <td className="p-3 text-left">
                     <img src={laptop.img} alt={laptop.title} className="w-10 h-10 rounded-full" />
                   </td>
-                  <td className="p-3 text-center relative">
+                  <td className="p-3 text-center ">
                     <button
                       className="text-gray-600 hover:text-gray-900 text-2xl"
                       onClick={() => setDropdownOpen(dropdownOpen === laptop._id ? null : laptop._id)}
@@ -237,12 +239,12 @@ console.log("filteredLaptops",filteredLaptops);
 
                     {dropdownOpen === laptop._id && (
                       <div className="absolute right-0 mt-2 w-32 bg-white border rounded-lg shadow-lg z-10">
-                        <Link to={`/laptoprentals/viewclient?id=${laptop._id}`}>
+                        <Link to={`/laptoprental/viewlaptop?id=${laptop._id}`}>
                           <button className="flex items-center gap-2 w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                             <Eye size={16} /> View
                           </button>
                         </Link>
-                        <Link to={`/laptoprentals/editclient?id=${laptop._id}`}>
+                        <Link to={`/laptoprental/editlaptop?id=${laptop._id}`}>
                           <button className="flex items-center gap-2 w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                             <Edit size={16} /> Edit
                           </button>
@@ -270,7 +272,7 @@ console.log("filteredLaptops",filteredLaptops);
           <button
             disabled={currentPage === 1}
             onClick={() => setCurrentPage(currentPage - 1)}
-            className="px-4 py-2 bg-[#13266A] text-white rounded hover:bg-yellow-950 disabled:opacity-50"
+            className={`px-4 py-2 rounded ${currentPage === 1 ? "bg-[#13266A] text-white cursor-not-allowed  hover:bg-yellow-950 " : "bg-[#13266A] text-white hover:bg-yellow-950"}`}
           >
             Prev
           </button>
@@ -278,7 +280,7 @@ console.log("filteredLaptops",filteredLaptops);
           <button
             disabled={indexOfLastLaptop >= filteredLaptops.length}
             onClick={() => setCurrentPage(currentPage + 1)}
-            className="px-4 py-2 bg-[#13266A] text-white rounded hover:bg-yellow-950 disabled:opacity-50"
+            className={`px-4 py-2 rounded ${indexOfLastLaptop >= filteredLaptops.length ? "bg-[#13266A] text-white cursor-not-allowed  hover:bg-yellow-950" : "bg-[#13266A] text-white hover:bg-yellow-950"}`}
           >
             Next
           </button>

@@ -12,6 +12,7 @@ import ViewClient from "./Pages/Our clients/viewClients.jsx";
 import EditClient from "./Pages/Our clients/editCients.jsx";
 import Laptoprental from "./Pages/Lap rental/laptopRental.jsx";
 import ViewLaptop from "./Pages/Lap rental/viewRental.jsx";
+import EditLaptop from "./Pages/Lap rental/editRental.jsx";
 
 // Protected Route Component
 const ProtectedRoute = ({ element }) => {
@@ -88,7 +89,8 @@ const routes = createBrowserRouter([
         element:<ProtectedRoute element={<ViewLaptop/>}/>
       },
       {
-        
+        path:"editlaptop",
+        element:<ProtectedRoute element={<EditLaptop/>}/>
       }
     ]
   }
