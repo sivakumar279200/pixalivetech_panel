@@ -164,7 +164,7 @@ const handleErrors = (obj) => {
     setShowAddModal(false); 
 };
   const filteredClients = clients.filter((c) =>
-    c.name.toLowerCase().includes(search.toLowerCase())
+    c?.name?.toLowerCase().includes(search.toLowerCase())
   );
 
   const indexOfLastClient = currentPage * clientsPerPage;

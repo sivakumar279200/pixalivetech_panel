@@ -13,6 +13,9 @@ import EditClient from "./Pages/Our clients/editCients.jsx";
 import Laptoprental from "./Pages/Lap rental/laptopRental.jsx";
 import ViewLaptop from "./Pages/Lap rental/viewRental.jsx";
 import EditLaptop from "./Pages/Lap rental/editRental.jsx";
+import Services from "./Pages/Services/services.jsx";
+import ViewServices from "./Pages/Services/viewServices.jsx";
+import Editservices from "./Pages/Services/editServices.jsx";
 
 // Protected Route Component
 const ProtectedRoute = ({ element }) => {
@@ -91,6 +94,24 @@ const routes = createBrowserRouter([
       {
         path:"editlaptop",
         element:<ProtectedRoute element={<EditLaptop/>}/>
+      }
+    ]
+  },
+  {
+     path:"/services",
+     element:<ProtectedRoute element={<Layout />} />,
+     children:[
+      {
+        index:true,
+        element:<Services/>
+      },
+      {
+        path:"viewService",
+        element:<ProtectedRoute element={<ViewServices/>}/>
+      },
+      {
+        path:"editService",
+        element:<ProtectedRoute element={<Editservices/>}/>
       }
     ]
   }
